@@ -19,6 +19,7 @@
 
 ### data
 
+- [ ] 공통된 출력포맷을 한 곳에서 관리하기
 ---
 - Food(sealed interface)
     - `name: String`
@@ -54,11 +55,44 @@
 
 ---
 
-### class IO
+### sealed class Screen
 
 ---
+
 - `showMenu(foods: List<Food>)`
- 
+- `backToPreviousScreen()`
+
+### class BurgersScreen : Screen
+
+---
+
+### class FrozenCustardScreen : Screen
+
+---
+
+### class DrinkScreen : Screen
+
+---
+
+### class BeerScreen : Screen
+
+---
+
+### class CartScreen : Screen
+
+---
+
+### object class ScreenStack
+
+
+- Screen을 관리하는 Stack
+
+---
+
+- `push(screen: Screen)`
+- `pop()`
+- `peek(): Screen?`
+
 ## Presenter
 
 ---
@@ -67,7 +101,6 @@
 
 ---
 - `loadMenu()`
-- ``
 
 ## Contract
 
