@@ -33,8 +33,6 @@
   - `orderNumber: Int`
   - `orderTime: Date`
   - `contents: List<Food>`
-- Step(enum class)
-  - TOP_LEVEL_CATEGORY, SPECIFIC_CATEGORY, CONFIRM
 
 
 ### class Basket
@@ -47,7 +45,7 @@
 ---
 - `cash: Int`
 - `systemMaintenanceTime: Date`
-- `getCash(): Int`
+- `getCashValance(): Int`
 - `pay(amount: Int): Int`
 
 
