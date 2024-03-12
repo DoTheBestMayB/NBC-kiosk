@@ -1,6 +1,7 @@
 package contract
 
 import model.Food
+import model.ScreenCategory
 
 interface KioskContract {
     interface View {
@@ -10,6 +11,6 @@ interface KioskContract {
 
     interface Presenter {
 
-        fun loadMenu()
+        fun loadMenu(category: ScreenCategory)
     }
 }

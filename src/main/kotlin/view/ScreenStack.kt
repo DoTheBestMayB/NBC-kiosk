@@ -5,6 +5,9 @@ object ScreenStack {
     private val screenStacks = mutableListOf<Screen>()
 
     fun push(screen: Screen) {
+        if (peek() == screen) {
+            return
+        }
         screenStacks.add(screen)
     }
 

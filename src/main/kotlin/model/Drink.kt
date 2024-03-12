@@ -1,6 +1,6 @@
 package model
 
-data class Drinks(
+data class Drink(
     override val name: String,
     override val price: Int,
     override val description: String

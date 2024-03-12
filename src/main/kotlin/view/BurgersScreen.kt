@@ -1,13 +1,19 @@
 package view
 
 import model.Food
+import model.ScreenCategory
 
-class BurgersScreen: Screen {
+class BurgersScreen: Screen() {
+
+    override val category: ScreenCategory = ScreenCategory.BURGERS
+
     override fun showMenu(foods: List<Food>) {
+        super.showMenu(foods)
         TODO("Not yet implemented")
     }
 
     override fun backToPreviousScreen() {
+        super.backToPreviousScreen()
         TODO("Not yet implemented")
     }
 
