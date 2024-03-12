@@ -1,6 +1,6 @@
 package contract
 
-import model.Food
+import model.food.Food
 import model.ScreenCategory
 
 interface KioskContract {
@@ -11,6 +11,7 @@ interface KioskContract {
         fun exit()
         fun showConfirm(selectedOption: Food)
         fun moveTo(screenType: ScreenCategory)
+        fun alertCartAddition(item: Food, isAdded: Boolean)
     }
 
     interface Presenter {

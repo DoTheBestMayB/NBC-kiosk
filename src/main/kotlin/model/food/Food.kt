@@ -1,4 +1,4 @@
-package model
+package model.food
 
 sealed interface Food {
     val name: String

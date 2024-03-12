@@ -1,5 +1,6 @@
 package model
 
+import model.food.Food
 import java.util.Date
 
 data class Receipt(

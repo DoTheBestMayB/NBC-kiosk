@@ -1,7 +1,7 @@
 package view
 
 import contract.KioskContract
-import model.Food
+import model.food.Food
 import model.ScreenCategory
 import presenter.Kiosk
 import kotlin.math.max
@@ -47,6 +47,13 @@ sealed class Screen : KioskContract.View {
         ScreenStack.push(createdScreen)
     }
 
+    override fun alertCartAddition(item: Food, isAdded: Boolean) {
+        if (isAdded) {
+            println("\n${item.name} 가 장바구니에 추가되었습니다.\n")
+        }
+        isConfirmCalled = false
+    }
+
     fun waitInput() {
         val input = readlnOrNull() ?: run {
             backToPreviousScreen()
@@ -57,7 +64,6 @@ sealed class Screen : KioskContract.View {
 
     fun loadMenu() {
         if (isConfirmCalled) { // 장바구니 담는 것의 확인 요청이 들어온 경우 넘어감
-            isConfirmCalled = false
             return
         }
         presenter.loadMenu(category)

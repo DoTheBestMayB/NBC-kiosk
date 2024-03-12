@@ -1,4 +1,6 @@
-package model
+package model.food
+
+import model.ScreenCategory
 
 data class OverView(
     override val name: String,

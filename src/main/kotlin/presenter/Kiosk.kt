@@ -2,6 +2,7 @@ package presenter
 
 import contract.KioskContract
 import model.*
+import model.food.*
 
 class Kiosk(
     private val view: KioskContract.View,
@@ -42,6 +43,8 @@ class Kiosk(
     )
 
     private var loadedCategory: ScreenCategory? = null
+    private var isAskingToAddToCart: Boolean = false
+    private var pendingCartAdditionItem: Food? = null
 
     override fun loadMenu(category: ScreenCategory) {
         val foods = menu[category] ?: emptyList()
@@ -64,6 +67,30 @@ class Kiosk(
             return
         }
 
+        if (isAskingToAddToCart) {
+            when (inputNum) {
+                1 -> run {
+                    val item = pendingCartAdditionItem ?: throw IllegalStateException(CRITICAL_ERROR)
+                    Cart.addItem(item)
+                    isAskingToAddToCart = false
+                    pendingCartAdditionItem = null
+                    view.alertCartAddition(item, true)
+                    return
+                }
+                2 -> run {
+                    val item = pendingCartAdditionItem ?: throw IllegalStateException(CRITICAL_ERROR)
+                    isAskingToAddToCart = false
+                    pendingCartAdditionItem = null
+                    view.alertCartAddition(item, false)
+                    return
+                }
+                else -> run {
+                    view.showOutput(WRONG_INPUT)
+                    return
+                }
+            }
+        }
+
         menu[loadedCategory]?.let {
             val selectedOption = it.getOrNull(inputNum-1) ?: run {
                 view.showOutput(WRONG_INPUT)
@@ -72,6 +99,8 @@ class Kiosk(
             if (loadedCategory == ScreenCategory.HOME) {
                 view.moveTo((selectedOption as OverView).screenType)
             } else {
+                isAskingToAddToCart = true
+                pendingCartAdditionItem = selectedOption
                 view.showConfirm(selectedOption)
             }
         } ?: view.showOutput(NOT_ALLOWED_REQUEST)
@@ -80,5 +109,6 @@ class Kiosk(
     companion object {
         private const val NOT_ALLOWED_REQUEST = "올바르지 않은 요청입니다."
         private const val WRONG_INPUT = "잘못된 번호를 입력했어요 다시 입력해주세요."
+        private const val CRITICAL_ERROR = "로직이 잘못되었습니다. 관리자에게 문의해주세요."
     }
 }

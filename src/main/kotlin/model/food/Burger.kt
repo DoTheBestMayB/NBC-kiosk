@@ -1,6 +1,6 @@
-package model
+package model.food
 
-data class FrozenCustard(
+data class Burger(
     override val name: String,
     override val price: Int,
     override val description: String
