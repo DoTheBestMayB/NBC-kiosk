@@ -18,4 +18,6 @@ object ScreenStack {
     fun peek(): Screen? {
         return screenStacks.lastOrNull()
     }
+
+    fun isEmpty() = screenStacks.isEmpty()
 }

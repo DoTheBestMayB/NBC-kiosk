@@ -9,10 +9,10 @@ class Kiosk(
 
     private val menu: HashMap<ScreenCategory, List<Food>> = hashMapOf(
         ScreenCategory.HOME to listOf(
-            OverView("Burgers", "앵거스 비프 통살을 다져만든 버거"),
-            OverView("Forzen Custard", "매장에서 신선하게 만드는 아이스크림"),
-            OverView("Drinks", "매장에서 직접 만드는 음료"),
-            OverView("Beer", "뉴욕 브루클린 브루어리에서 양조한 맥주"),
+            OverView("Burgers", "앵거스 비프 통살을 다져만든 버거", ScreenCategory.BURGERS),
+            OverView("Forzen Custard", "매장에서 신선하게 만드는 아이스크림", ScreenCategory.FROZEN_CUSTARD),
+            OverView("Drinks", "매장에서 직접 만드는 음료", ScreenCategory.DRINK),
+            OverView("Beer", "뉴욕 브루클린 브루어리에서 양조한 맥주", ScreenCategory.BEER),
         ),
         ScreenCategory.BEER to listOf(
             Beer("Lager Light", 4500, "청량감이 뛰어난 라이트 라거, 부드러운 목넘김"),
@@ -41,8 +41,44 @@ class Kiosk(
         ),
     )
 
+    private var loadedCategory: ScreenCategory? = null
+
     override fun loadMenu(category: ScreenCategory) {
         val foods = menu[category] ?: emptyList()
+        loadedCategory = category
+
         view.showMenu(foods)
+    }
+
+    override fun checkInput(input: String) {
+        if (loadedCategory == null) {
+            view.showOutput(NOT_ALLOWED_REQUEST)
+            return
+        }
+        val inputNum = input.toIntOrNull() ?: run {
+            view.showOutput(WRONG_INPUT)
+            return
+        }
+        if (inputNum == 0) {
+            view.exit()
+            return
+        }
+
+        menu[loadedCategory]?.let {
+            val selectedOption = it.getOrNull(inputNum-1) ?: run {
+                view.showOutput(WRONG_INPUT)
+                return
+            }
+            if (loadedCategory == ScreenCategory.HOME) {
+                view.moveTo((selectedOption as OverView).screenType)
+            } else {
+                view.showConfirm(selectedOption)
+            }
+        } ?: view.showOutput(NOT_ALLOWED_REQUEST)
+    }
+
+    companion object {
+        private const val NOT_ALLOWED_REQUEST = "올바르지 않은 요청입니다."
+        private const val WRONG_INPUT = "잘못된 번호를 입력했어요 다시 입력해주세요."
     }
 }

@@ -1,27 +1,14 @@
 package view
 
-import contract.KioskContract
-import model.Food
 import model.ScreenCategory
-import presenter.Kiosk
 
 class HomeScreen : Screen() {
 
     override val category: ScreenCategory = ScreenCategory.HOME
 
-    private val presenter: KioskContract.Presenter = Kiosk(this)
-
-    override fun equals(other: Any?): Boolean {
-        return this === other
-    }
-
-    override fun hashCode(): Int {
-        return System.identityHashCode(this)
-    }
-
     fun start() {
         showWelcomeMessage()
-        presenter.loadMenu(category)
+        loadMenu()
     }
 
     private fun showWelcomeMessage() {
