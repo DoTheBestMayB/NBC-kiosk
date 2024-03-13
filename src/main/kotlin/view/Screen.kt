@@ -1,8 +1,8 @@
 package view
 
 import contract.KioskContract
-import model.food.Food
 import model.ScreenCategory
+import model.food.Food
 import model.food.OverView
 import presenter.Kiosk
 import kotlin.math.max
@@ -10,7 +10,7 @@ import kotlin.math.max
 sealed class Screen : KioskContract.View {
 
     abstract val category: ScreenCategory
-    private var presenter: KioskContract.Presenter = Kiosk(this)
+    protected var presenter: KioskContract.Presenter = Kiosk(this)
     private var isConfirmCalled = false
 
     override fun showMenu(foods: List<Food>) {
@@ -53,6 +53,23 @@ sealed class Screen : KioskContract.View {
         showOption(startIndex, options, false)
     }
 
+    override fun showCartItem(cartItems: Map<Food, Int>) {
+        showTitle(ScreenCategory.CART)
+
+        val trailingSpace = cartItems.keys.maxOf { it.name.length } + 2
+
+        var totalPrice = 0
+        for ((food, count) in cartItems) {
+            totalPrice += food.price * count
+            println("${food.name.padEnd(trailingSpace)}| ${convertPrice(food)} ${"%2d".format(count)}개 | ${food.description}")
+        }
+        println("\n[ Total ]")
+        val price = convertPrice(OverView(DUMMY_FOR_CONVERT, DUMMY_FOR_CONVERT, ScreenCategory.HOME, totalPrice))
+        println("${price}총 주문 금액")
+
+        println("\n0. 돌아가기      1. 주문")
+    }
+
     fun waitInput() {
         val input = readlnOrNull() ?: run {
             backToPreviousScreen()
@@ -61,7 +78,7 @@ sealed class Screen : KioskContract.View {
         presenter.checkInput(input)
     }
 
-    fun loadMenu() {
+    open fun loadMenu() {
         if (isConfirmCalled) { // 장바구니 담는 것의 확인 요청이 들어온 경우 넘어감
             return
         }
@@ -85,7 +102,7 @@ sealed class Screen : KioskContract.View {
     }
 
     private fun createScreen(screenType: ScreenCategory): Screen {
-        return when(screenType) {
+        return when (screenType) {
             ScreenCategory.BEER -> BeerScreen()
             ScreenCategory.BURGERS -> BurgersScreen()
             ScreenCategory.DRINK -> DrinkScreen()
@@ -101,10 +118,10 @@ sealed class Screen : KioskContract.View {
 
     private fun showExitOption(trailingSpace: Int) {
         if (category == ScreenCategory.HOME) {
-            println("0. ${"종료".padEnd(trailingSpace-1)}| 프로그램 종료")
+            println("0. ${"종료".padEnd(trailingSpace - 1)}| 프로그램 종료")
             return
         }
-        println("0. ${"뒤로가기".padEnd(trailingSpace-2)}| 뒤로가기")
+        println("0. ${"뒤로가기".padEnd(trailingSpace - 2)}| 뒤로가기")
     }
 
     private fun showTitle(category: ScreenCategory) {
@@ -119,7 +136,7 @@ sealed class Screen : KioskContract.View {
         if (food.price == Food.EMPTY_PRICE) {
             return ""
         }
-        return " W ${food.price / 1000.0} |"
+        return "W ${food.price / 1000.0}".padEnd(NUM_FOR_PRICE_PAD_END) + " | "
     }
 
     private fun createSentence(food: Food, trailingSpace: Int): String {
@@ -128,5 +145,7 @@ sealed class Screen : KioskContract.View {
 
     companion object {
         private const val CONFORM_MESSAGE = "위 메뉴를 장바구니에 추가하시겠습니까?\n1. 확인\t\t2.취소"
+        private const val NUM_FOR_PRICE_PAD_END = 5
+        private const val DUMMY_FOR_CONVERT = "Dummy"
     }
 }

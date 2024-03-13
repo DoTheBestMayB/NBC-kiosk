@@ -1,7 +1,9 @@
 package presenter
 
 import contract.KioskContract
-import model.*
+import model.Cart
+import model.OrderManager
+import model.ScreenCategory
 import model.food.*
 
 class Kiosk(
@@ -42,9 +44,9 @@ class Kiosk(
         ),
     )
 
-    private val orderOptions = listOf(
-        OverView("Order", "장바구니를 확인 후 주문합니다.", ScreenCategory.HOME),
-        OverView("Cancel", "진행중인 주문을 취소합니다.", ScreenCategory.HOME),
+    private val orderOptions = hashMapOf(
+        (menu[ScreenCategory.HOME]?.size?.plus(1) ?: 1) to OverView("Order", "장바구니를 확인 후 주문합니다.", ScreenCategory.CART),
+        (menu[ScreenCategory.HOME]?.size?.plus(2) ?: 2) to OverView("Cancel", "진행중인 주문을 취소합니다.", ScreenCategory.HOME),
     )
 
     private var loadedCategory: ScreenCategory? = null
@@ -52,7 +54,10 @@ class Kiosk(
     private var pendingCartAdditionItem: Food? = null
 
     override fun loadMenu(category: ScreenCategory) {
-        val foods = menu[category] ?: emptyList()
+        val foods = menu[category] ?: run {
+            view.showOutput(NOT_ALLOWED_REQUEST)
+            return
+        }
         loadedCategory = category
 
         view.showMenu(foods)
@@ -94,6 +99,32 @@ class Kiosk(
             return
         }
 
+        // Home 화면에서 ORDER MENU 옵션을 입력했는지 검사한다.
+        if (loadedCategory == ScreenCategory.HOME && checkCartItemExist()) {
+            when(orderOptions[inputNum]?.screenType) {
+                ScreenCategory.CART -> {
+                    view.moveTo(ScreenCategory.CART)
+                    return
+                }
+                ScreenCategory.HOME -> run {
+                    clearUserSelectInfo()
+                    return
+                }
+                else -> Unit
+            }
+        } else if (loadedCategory == ScreenCategory.CART) {
+            if (inputNum == 1) {
+                val items = Cart.cartItems
+                val orderedTime = OrderManager.add(items)
+                Cart.clear()
+                view.showOutput("결제를 완료했습니다. (${orderedTime})\n\n")
+                view.exit()
+            } else {
+                view.showOutput(WRONG_INPUT)
+            }
+            return
+        }
+
         menu[loadedCategory]?.let {
             val selectedOption = it.getOrNull(inputNum-1) ?: run {
                 view.showOutput(WRONG_INPUT)
@@ -111,12 +142,26 @@ class Kiosk(
 
     // Order Menu는 홈 화면에서만 보일 수 있기 때문에, 앞에 표시되는 index 숫자는 ScreenCategory.HOME 이후로 설정함
     override fun checkOrderMenuOptionVisibility() {
-        if (Cart.cartItems.isEmpty()) {
+        if (checkCartItemExist().not()) {
             return
         }
         val startIndex = menu[ScreenCategory.HOME]?.size?.plus(1) ?: 1
 
-        view.showOrderMenuOption(startIndex, orderOptions)
+        view.showOrderMenuOption(startIndex, orderOptions.values.toList())
+    }
+
+    override fun showCartState() {
+        loadedCategory = ScreenCategory.CART
+        view.showCartItem(Cart.cartItems)
+    }
+
+    private fun checkCartItemExist(): Boolean = Cart.cartItems.isNotEmpty()
+
+    private fun clearUserSelectInfo() {
+        Cart.clear()
+        loadedCategory = null
+        isAskingToAddToCart = false
+        pendingCartAdditionItem = null
     }
 
     companion object {

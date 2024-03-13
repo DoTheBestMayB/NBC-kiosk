@@ -1,10 +1,10 @@
 package model
 
 import model.food.Food
-import java.util.Date
+import java.time.LocalDateTime
 
 data class Receipt(
     val orderNumber: Int,
-    val orderTime: Date,
-    val contents: List<Food>,
+    val orderTime: LocalDateTime,
+    val contents: Map<Food, Int>,
 )

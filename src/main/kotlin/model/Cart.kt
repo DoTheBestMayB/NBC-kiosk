@@ -10,4 +10,8 @@ object Cart {
     fun addItem(food: Food) {
         _cartItems[food] = _cartItems.getOrDefault(food, 0) + 1
     }
+
+    fun clear() {
+        _cartItems.clear()
+    }
 }
