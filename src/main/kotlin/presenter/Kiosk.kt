@@ -42,6 +42,11 @@ class Kiosk(
         ),
     )
 
+    private val orderOptions = listOf(
+        OverView("Order", "장바구니를 확인 후 주문합니다.", ScreenCategory.HOME),
+        OverView("Cancel", "진행중인 주문을 취소합니다.", ScreenCategory.HOME),
+    )
+
     private var loadedCategory: ScreenCategory? = null
     private var isAskingToAddToCart: Boolean = false
     private var pendingCartAdditionItem: Food? = null
@@ -104,6 +109,16 @@ class Kiosk(
                 view.showConfirm(selectedOption)
             }
         } ?: view.showOutput(NOT_ALLOWED_REQUEST)
+    }
+
+    // Order Menu는 홈 화면에서만 보일 수 있기 때문에, 앞에 표시되는 index 숫자는 ScreenCategory.HOME 이후로 설정함
+    override fun checkOrderMenuOptionVisibility() {
+        if (Cart.cartItems.isEmpty()) {
+            return
+        }
+        val startIndex = menu[ScreenCategory.HOME]?.size?.plus(1) ?: 1
+
+        view.showOrderMenuOption(startIndex, orderOptions)
     }
 
     companion object {

@@ -3,6 +3,7 @@ package view
 import contract.KioskContract
 import model.food.Food
 import model.ScreenCategory
+import model.food.OverView
 import presenter.Kiosk
 import kotlin.math.max
 
@@ -16,22 +17,14 @@ sealed class Screen : KioskContract.View {
         ScreenStack.push(this)
 
         showTitle(category)
-
-        val trailingSpace = max(foods.maxOf { it.name.length } + 2, "뒤로가기".length + 2)
-
-        for ((index, food) in foods.withIndex()) {
-            println("${index + 1}. ${createSentence(food, trailingSpace)}")
-        }
-        showExitOption(trailingSpace)
-        println()
+        showOption(1, foods, true)
     }
 
     override fun showConfirm(selectedOption: Food) {
         isConfirmCalled = true
         println(createSentence(selectedOption, selectedOption.name.length + 2))
         println(CONFORM_MESSAGE)
-        println()
-        println()
+        println("\n")
     }
 
     override fun showOutput(sentence: String) {
@@ -54,6 +47,12 @@ sealed class Screen : KioskContract.View {
         isConfirmCalled = false
     }
 
+    override fun showOrderMenuOption(startIndex: Int, options: List<OverView>) {
+        showOrderOptionTitle()
+
+        showOption(startIndex, options, false)
+    }
+
     fun waitInput() {
         val input = readlnOrNull() ?: run {
             backToPreviousScreen()
@@ -67,6 +66,22 @@ sealed class Screen : KioskContract.View {
             return
         }
         presenter.loadMenu(category)
+        if (category == ScreenCategory.HOME) {
+            presenter.checkOrderMenuOptionVisibility()
+        }
+    }
+
+    private fun showOption(startIndex: Int, options: List<Food>, isShowExitOption: Boolean) {
+        val trailingSpace = max(options.maxOf { it.name.length } + 2, "뒤로가기".length + 2)
+
+        for ((index, food) in options.withIndex()) {
+            println("${startIndex + index}. ${createSentence(food, trailingSpace)}")
+        }
+
+        if (isShowExitOption) {
+            showExitOption(trailingSpace)
+        }
+        println()
     }
 
     private fun createScreen(screenType: ScreenCategory): Screen {
@@ -94,6 +109,10 @@ sealed class Screen : KioskContract.View {
 
     private fun showTitle(category: ScreenCategory) {
         println("[ ${category.title} ]")
+    }
+
+    private fun showOrderOptionTitle() {
+        println("[  ORDER MENU ]")
     }
 
     private fun convertPrice(food: Food): String {
