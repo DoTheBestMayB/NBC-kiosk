@@ -9,7 +9,7 @@ import kotlin.math.max
 sealed class Screen : KioskContract.View {
 
     abstract val category: ScreenCategory
-    protected var presenter: KioskContract.Presenter = Kiosk(this)
+    private var presenter: KioskContract.Presenter = Kiosk(this)
     private var isConfirmCalled = false
 
     override fun showMenu(foods: List<Food>) {
