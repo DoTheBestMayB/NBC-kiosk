@@ -80,20 +80,18 @@ class Kiosk(
                     isAskingToAddToCart = false
                     pendingCartAdditionItem = null
                     view.alertCartAddition(item, true)
-                    return
                 }
                 2 -> run {
                     val item = pendingCartAdditionItem ?: throw IllegalStateException(CRITICAL_ERROR)
                     isAskingToAddToCart = false
                     pendingCartAdditionItem = null
                     view.alertCartAddition(item, false)
-                    return
                 }
                 else -> run {
                     view.showOutput(WRONG_INPUT)
-                    return
                 }
             }
+            return
         }
 
         menu[loadedCategory]?.let {
