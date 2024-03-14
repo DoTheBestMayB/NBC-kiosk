@@ -1,19 +1,10 @@
 package model
 
-import java.util.*
+import java.time.LocalDateTime
 
-class Card(
-    private var cash: Int,
-    private var systemMaintenanceTime: Date,
-) {
-
-    fun getCashValance(): Int {
-        return cash
-    }
-
-    fun pay(amount: Int): Boolean {
-        if (amount > cash) return false
-        cash -= amount
-        return true
-    }
-}
+data class Card(
+    val userId: Int,
+    val cash: Int,
+    val systemMaintenanceTime: LocalDateTime,
+    val duration: Long,
+)

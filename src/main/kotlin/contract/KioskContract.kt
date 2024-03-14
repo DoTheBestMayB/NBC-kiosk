@@ -1,5 +1,6 @@
 package contract
 
+import model.Card
 import model.ScreenCategory
 import model.food.Food
 import model.food.OverView
@@ -15,6 +16,7 @@ interface KioskContract {
         fun alertCartAddition(item: Food, isAdded: Boolean)
         fun showOrderMenuOption(startIndex: Int, options: List<OverView>)
         fun showCartItem(cartItems: Map<Food, Int>)
+        fun showCardInfo(card: Card)
     }
 
     interface Presenter {
@@ -23,5 +25,6 @@ interface KioskContract {
         fun checkInput(input: String)
         fun checkOrderMenuOptionVisibility()
         fun showCartState()
+        fun loadCardInfo()
     }
 }

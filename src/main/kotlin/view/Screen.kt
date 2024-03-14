@@ -1,17 +1,24 @@
 package view
 
 import contract.KioskContract
+import di.Injector
+import model.Card
 import model.ScreenCategory
 import model.food.Food
 import model.food.OverView
 import presenter.Kiosk
+import java.time.format.DateTimeFormatter
 import kotlin.math.max
 
 sealed class Screen : KioskContract.View {
 
     abstract val category: ScreenCategory
-    protected var presenter: KioskContract.Presenter = Kiosk(this)
+    protected var presenter: KioskContract.Presenter =
+        Kiosk(this, Injector.provideCardRepository(), Injector.provideMenuRepository())
     private var isConfirmCalled = false
+
+    private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
 
     override fun showMenu(foods: List<Food>) {
         ScreenStack.push(this)
@@ -68,6 +75,11 @@ sealed class Screen : KioskContract.View {
         println("${price}총 주문 금액")
 
         println("\n0. 돌아가기      1. 주문")
+    }
+
+    override fun showCardInfo(card: Card) {
+        println("잔액은 W ${card.cash}원 입니다.")
+        println("${format.format(card.systemMaintenanceTime)} ~ ${format.format(card.systemMaintenanceTime.plusMinutes(card.duration))}에 서버점검이 예정되어 있습니다.\n")
     }
 
     fun waitInput() {
