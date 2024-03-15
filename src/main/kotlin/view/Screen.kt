@@ -14,7 +14,7 @@ sealed class Screen : KioskContract.View {
 
     abstract val category: ScreenCategory
     protected var presenter: KioskContract.Presenter =
-        Kiosk(this, Injector.provideCardRepository(), Injector.provideMenuRepository())
+        Kiosk(this, Injector.provideCardRepository(), Injector.provideMenuRepository(), Injector.provideOrderRepository())
     private var isConfirmCalled = false
 
     private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")

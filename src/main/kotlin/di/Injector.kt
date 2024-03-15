@@ -1,9 +1,6 @@
 package di
 
-import model.CardRepository
-import model.CardRepositoryImpl
-import model.MenuRepository
-import model.MenuRepositoryImpl
+import model.*
 
 object Injector {
 
@@ -13,5 +10,9 @@ object Injector {
 
     fun provideMenuRepository(): MenuRepository {
         return MenuRepositoryImpl
+    }
+
+    fun provideOrderRepository(): OrderRepository {
+        return OrderRepositoryImpl
     }
 }

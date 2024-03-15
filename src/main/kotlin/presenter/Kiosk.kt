@@ -9,6 +9,7 @@ class Kiosk(
     private val view: KioskContract.View,
     private val cardRepository: CardRepository,
     private val menuRepository: MenuRepository,
+    private val orderRepository: OrderRepository,
 ) : KioskContract.Presenter {
 
     private var loadedCategory: ScreenCategory? = null
@@ -82,7 +83,7 @@ class Kiosk(
                 // 결제 여부 확인
                 when (val result = cardRepository.pay(Buildconfig.USER_KEY_ID, totalPrice)) {
                     is Result.Success -> {
-                        val orderedTime = OrderManager.add(items)
+                        val orderedTime = orderRepository.add(items)
                         Cart.clear()
                         view.showOutput("결제를 완료했습니다. (${orderedTime})\n\n")
                     }
