@@ -5,7 +5,8 @@
 </br>더 이상 화면에서 처리할 내역이 없으면 Stack에서 pop을 호출하여 이전 화면이 보이도록 했습니다.
 - Stack이 비게 되면 프로그램이 종료됩니다.
 
-![Stack 구성](docs/file/stack 구성.png)
+
+![image](docs/file/stack.png)
 
 
 ### 📙 [요구 사항 분석](docs/README.md)
